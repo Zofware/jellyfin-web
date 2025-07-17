@@ -59,12 +59,14 @@ const UserProfile: FunctionComponent = () => {
                     throw new Error('Unexpected null user.Policy');
                 }
 
-                if (user.PrimaryImageTag) {
-                    (page.querySelector('#btnAddImage') as HTMLButtonElement).classList.add('hide');
-                    (page.querySelector('#btnDeleteImage') as HTMLButtonElement).classList.remove('hide');
-                } else if (appHost.supports(AppFeature.FileInput) && (loggedInUser?.Policy?.IsAdministrator || user.Policy.EnableUserPreferenceAccess)) {
-                    (page.querySelector('#btnDeleteImage') as HTMLButtonElement).classList.add('hide');
-                    (page.querySelector('#btnAddImage') as HTMLButtonElement).classList.remove('hide');
+                if (loggedInUser?.Policy?.IsAdministrator || user.Policy.EnableUserPreferenceAccess) {
+                    if (user.PrimaryImageTag) {
+                        (page.querySelector('#btnAddImage') as HTMLButtonElement).classList.add('hide');
+                        (page.querySelector('#btnDeleteImage') as HTMLButtonElement).classList.remove('hide');
+                    } else if (appHost.supports(AppFeature.FileInput)) {
+                        (page.querySelector('#btnDeleteImage') as HTMLButtonElement).classList.add('hide');
+                        (page.querySelector('#btnAddImage') as HTMLButtonElement).classList.remove('hide');
+                    }
                 }
             }).catch(err => {
                 console.error('[userprofile] failed to get current user', err);
