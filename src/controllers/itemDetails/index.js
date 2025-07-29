@@ -2142,7 +2142,7 @@ export default function (view, params) {
 
                 playbackManager.play({
                     ids: [params.id],
-                    startPositionTicks: parseInt(params.ts, 10) * 10000, // milliseconds to ticks
+                    startPositionTicks: Math.trunc(parseFloat(params.ts) * 10000000), // seconds to ticks
                     serverId: serverId
                 });
             }
