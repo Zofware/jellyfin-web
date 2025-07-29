@@ -2120,6 +2120,21 @@ export default function (view, params) {
             Events.on(playbackManager, 'playerchange', onPlayerChange);
 
             itemShortcuts.on(view.querySelector('.nameContainer'));
+
+            if (params.ts) {
+                // remove the 'ts' parameter from the address so we don't play again after back button is pressed
+                if (window.history.replaceState) {
+                    const href = window.location.href;
+                    const newHref = href.replace(/&?ts=?[^&]*/, '');
+                    window.history.replaceState(null, null, newHref);
+                }
+
+                playbackManager.play({
+                    ids: [params.id],
+                    startPositionTicks: parseInt(params.ts, 10) * 10000, // milliseconds to ticks
+                    serverId: params.serverId
+                });
+            }
         });
         view.addEventListener('viewbeforehide', function () {
             itemShortcuts.off(view.querySelector('.nameContainer'));
