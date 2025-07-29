@@ -2122,17 +2122,28 @@ export default function (view, params) {
             itemShortcuts.on(view.querySelector('.nameContainer'));
 
             if (params.ts) {
-                // remove the 'ts' parameter from the address so we don't play again after back button is pressed
+                // Grab the current server id if the param wasn't set.
+                const serverId = params.serverId ? params.serverId : ApiClient.serverId();
+
+                // Massage the URL so the back button functions rationally.
                 if (window.history.replaceState) {
                     const href = window.location.href;
-                    const newHref = href.replace(/&?ts=?[^&]*/, '');
+
+                    // remove the 'ts' parameter from the address so we don't play again after back button is pressed
+                    let newHref = href.replace(/&?ts=?[^&]*/, '');
+
+                    // add the server id if it was missing
+                    if (!params.serverId) {
+                        newHref += '&serverId=' + serverId;
+                    }
+
                     window.history.replaceState(null, null, newHref);
                 }
 
                 playbackManager.play({
                     ids: [params.id],
                     startPositionTicks: parseInt(params.ts, 10) * 10000, // milliseconds to ticks
-                    serverId: params.serverId
+                    serverId: serverId
                 });
             }
         });
