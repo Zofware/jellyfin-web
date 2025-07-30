@@ -2144,9 +2144,14 @@ export default function (view, params) {
                 }
 
                 Promise.all([getPromise(apiClient, params), apiClient.getCurrentUser()]).then(([item]) => {
+                    /*
                     playItem(
                         item,
                         Math.trunc(parseFloat(params.ts) * 10000000)); // seconds to ticks
+                    */
+                    item.UserData.PlaybackPositionTicks = Math.trunc(parseFloat(params.ts) * 10000000); // seconds to ticks
+                    const button = document.getElementById('resumeButton');
+                    button.click();
                 }).catch((error) => {
                     console.error('failed to get item or current user: ', error);
                 });
