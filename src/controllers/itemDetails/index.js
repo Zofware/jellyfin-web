@@ -2143,13 +2143,12 @@ export default function (view, params) {
                     window.history.replaceState(null, null, newHref);
                 }
 
-                playbackManager.play({
-                    ids: [params.id],
-                    startPositionTicks: Math.trunc(parseFloat(params.ts) * 10000000), // seconds to ticks
-                    serverId: serverId,
-                    mediaSourceId: view.querySelector('.selectSource').value,
-                    audioStreamIndex: view.querySelector('.selectAudio').value || null,
-                    subtitleStreamIndex: view.querySelector('.selectSubtitles').value
+                Promise.all([getPromise(apiClient, params), apiClient.getCurrentUser()]).then(([item]) => {
+                    playItem(
+                        item,
+                        Math.trunc(parseFloat(params.ts) * 10000000)); // seconds to ticks
+                }).catch((error) => {
+                    console.error('failed to get item or current user: ', error);
                 });
             }
         });
