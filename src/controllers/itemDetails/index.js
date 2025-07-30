@@ -2130,7 +2130,7 @@ export default function (view, params) {
                     const href = window.location.href;
 
                     // remove the 'ts' parameter from the address so we don't play again after back button is pressed
-                    let newHref = href.replace(/&?ts=?[^&]*/, '');
+                    let newHref = href.replace(/([?&])ts=[0-9.ef+]+&?/, '$1');
 
                     // add the server id if it was missing
                     if (!params.serverId) {
