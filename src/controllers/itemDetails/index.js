@@ -2132,6 +2132,9 @@ export default function (view, params) {
                     // remove the 'ts' parameter from the address so we don't play again after back button is pressed
                     let newHref = href.replace(/([?&])ts=[0-9.ef+]+&?/, '$1');
 
+                    // remove trailing & if the substitution above left one
+                    newHref = newHref.replace(/&$/, '');
+
                     // add the server id if it was missing
                     if (!params.serverId) {
                         newHref += '&serverId=' + serverId;
@@ -2143,7 +2146,10 @@ export default function (view, params) {
                 playbackManager.play({
                     ids: [params.id],
                     startPositionTicks: Math.trunc(parseFloat(params.ts) * 10000000), // seconds to ticks
-                    serverId: serverId
+                    serverId: serverId,
+                    mediaSourceId: view.querySelector('.selectSource').value,
+                    audioStreamIndex: view.querySelector('.selectAudio').value || null,
+                    subtitleStreamIndex: view.querySelector('.selectSubtitles').value
                 });
             }
         });
