@@ -1910,6 +1910,34 @@ export default function (view, params) {
         return params.serverId ? ServerConnections.getApiClient(params.serverId) : ApiClient;
     }
 
+    function checkAutoPlay() {
+        if (params.ts) {
+            // Grab the current server id if the param wasn't set.
+            const serverId = params.serverId ? params.serverId : ApiClient.serverId();
+
+            // Massage the URL so the back button functions rationally.
+            if (window.history.replaceState) {
+                const href = window.location.href;
+
+                // remove the 'ts' parameter from the address so we don't play again after back button is pressed
+                let newHref = href.replace(/([?&])ts=[0-9.ef+]+&?/, '$1');
+
+                // remove trailing & if the substitution above left one
+                newHref = newHref.replace(/&$/, '');
+
+                // add the server id if it was missing
+                if (!params.serverId) {
+                    newHref += '&serverId=' + serverId;
+                }
+
+                window.history.replaceState(null, null, newHref);
+            }
+
+            currentItem.UserData.PlaybackPositionTicks = Math.trunc(parseFloat(params.ts) * 10000000); // seconds to ticks
+            playItem(currentItem, currentItem.UserData.PlaybackPositionTicks);
+        }
+    }
+
     function reload(instance, page, pageParams) {
         loading.show();
 
@@ -1918,6 +1946,14 @@ export default function (view, params) {
         Promise.all([getPromise(apiClient, pageParams), apiClient.getCurrentUser()]).then(([item, user]) => {
             currentItem = item;
             reloadFromItem(instance, page, pageParams, item, user);
+
+            if (document.readyState === 'loading') {
+                // Loading hasn't finished yet
+                document.addEventListener('DOMContentLoaded', checkAutoPlay);
+            } else {
+                // `DOMContentLoaded` has already fired
+                checkAutoPlay();
+            }
         }).catch((error) => {
             console.error('failed to get item or current user: ', error);
         });
@@ -2120,42 +2156,6 @@ export default function (view, params) {
             Events.on(playbackManager, 'playerchange', onPlayerChange);
 
             itemShortcuts.on(view.querySelector('.nameContainer'));
-
-            if (params.ts) {
-                // Grab the current server id if the param wasn't set.
-                const serverId = params.serverId ? params.serverId : ApiClient.serverId();
-
-                // Massage the URL so the back button functions rationally.
-                if (window.history.replaceState) {
-                    const href = window.location.href;
-
-                    // remove the 'ts' parameter from the address so we don't play again after back button is pressed
-                    let newHref = href.replace(/([?&])ts=[0-9.ef+]+&?/, '$1');
-
-                    // remove trailing & if the substitution above left one
-                    newHref = newHref.replace(/&$/, '');
-
-                    // add the server id if it was missing
-                    if (!params.serverId) {
-                        newHref += '&serverId=' + serverId;
-                    }
-
-                    window.history.replaceState(null, null, newHref);
-                }
-
-                Promise.all([getPromise(apiClient, params), apiClient.getCurrentUser()]).then(([item]) => {
-                    /*
-                    playItem(
-                        item,
-                        Math.trunc(parseFloat(params.ts) * 10000000)); // seconds to ticks
-                    */
-                    item.UserData.PlaybackPositionTicks = Math.trunc(parseFloat(params.ts) * 10000000); // seconds to ticks
-                    const button = document.getElementById('resumeButton');
-                    button.click();
-                }).catch((error) => {
-                    console.error('failed to get item or current user: ', error);
-                });
-            }
         });
         view.addEventListener('viewbeforehide', function () {
             itemShortcuts.off(view.querySelector('.nameContainer'));
