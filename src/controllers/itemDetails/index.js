@@ -1910,6 +1910,21 @@ export default function (view, params) {
         return params.serverId ? ServerConnections.getApiClient(params.serverId) : ApiClient;
     }
 
+    function lookupTag() {
+        if (params.tag) {
+            const apiClient = ApiClient;
+            const href = window.location.href;
+
+            // look up the item id associated with the tag
+            apiClient.getJSON(apiClient.getUrl('Items?recursive=true&tags=' + params.tag)).then(function (items) {
+                if (Array.isArray(items) || items.length) {
+                    const newHref = href.replace(/([?&])tag=[0-9.ef+]+(&?)/, '$1' + 'id=' + items[0].Id + '$2');
+                    window.location.href = newHref;
+                }
+            });
+        }
+    }
+
     function checkAutoPlay() {
         if (params.ts) {
             // Grab the current server id if the param wasn't set.
@@ -2117,6 +2132,8 @@ export default function (view, params) {
 
     function init() {
         const apiClient = getApiClient();
+
+        lookupTag();
 
         bindAll(view, '.btnPlay', 'click', onPlayClick);
         bindAll(view, '.btnReplay', 'click', onPlayClick);
