@@ -58,6 +58,27 @@ function getPromise(apiClient, params) {
         return apiClient.getItem(apiClient.getCurrentUserId(), id);
     }
 
+    if (params.tag) {
+        console.log('zof getPromise() tag:', params.tag);
+
+        // look up the item id associated with the tag
+        // return apiClient.getJSON(apiClient.getUrl('Items?recursive=true&tags=' + params.tag))
+        return apiClient.getItems(apiClient.getCurrentUserId(),
+            {
+                Recursive: true,
+                Tags: [params.tag]
+            })
+            .then(function (items) {
+                if (items && items.TotalRecordCount > 0 && items.Items) {
+                    const item = items.Items[0];
+                    console.log('zof getPromise() item:', item.Id);
+                    params.id = item.Id;
+                    params.serverId = params.serverId ?? apiClient.serverId();
+                    return apiClient.getItem(apiClient.getCurrentUserId(), item.Id);
+                }
+            });
+    }
+
     if (params.seriesTimerId) {
         return apiClient.getLiveTvSeriesTimer(params.seriesTimerId);
     }
