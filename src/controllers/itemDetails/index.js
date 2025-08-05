@@ -58,20 +58,19 @@ function getPromise(apiClient, params) {
         return apiClient.getItem(apiClient.getCurrentUserId(), id);
     }
 
-    if (params.tag) {
-        console.log('zof getPromise() tag:', params.tag);
+    if (params.tag || params.sid) {
+        // Get the tag, either directly or with a short id (sid:) prefix.
+        const tag = params.tag ?? ('sid:' + params.sid);
 
-        // look up the item id associated with the tag
-        // return apiClient.getJSON(apiClient.getUrl('Items?recursive=true&tags=' + params.tag))
+        // look up the item id associated with the short id
         return apiClient.getItems(apiClient.getCurrentUserId(),
             {
                 Recursive: true,
-                Tags: [params.tag]
+                Tags: [tag]
             })
             .then(function (items) {
                 if (items && items.TotalRecordCount > 0 && items.Items) {
                     const item = items.Items[0];
-                    console.log('zof getPromise() item:', item.Id);
                     params.id = item.Id;
                     params.serverId = params.serverId ?? apiClient.serverId();
                     return apiClient.getItem(apiClient.getCurrentUserId(), item.Id);
@@ -1931,25 +1930,10 @@ export default function (view, params) {
         return params.serverId ? ServerConnections.getApiClient(params.serverId) : ApiClient;
     }
 
-    function lookupTag() {
-        if (params.tag) {
-            const apiClient = ApiClient;
-            const href = window.location.href;
-
-            // look up the item id associated with the tag
-            apiClient.getJSON(apiClient.getUrl('Items?recursive=true&tags=' + params.tag)).then(function (items) {
-                if (Array.isArray(items) || items.length) {
-                    const newHref = href.replace(/([?&])tag=[0-9.ef+]+(&?)/, '$1' + 'id=' + items[0].Id + '$2');
-                    window.location.href = newHref;
-                }
-            });
-        }
-    }
-
     function checkAutoPlay() {
         if (params.ts) {
             // Grab the current server id if the param wasn't set.
-            const serverId = params.serverId ? params.serverId : ApiClient.serverId();
+            const serverId = params.serverId ?? ApiClient.serverId();
 
             // Massage the URL so the back button functions rationally.
             if (window.history.replaceState) {
@@ -1982,14 +1966,7 @@ export default function (view, params) {
         Promise.all([getPromise(apiClient, pageParams), apiClient.getCurrentUser()]).then(([item, user]) => {
             currentItem = item;
             reloadFromItem(instance, page, pageParams, item, user);
-
-            if (document.readyState === 'loading') {
-                // Loading hasn't finished yet
-                document.addEventListener('DOMContentLoaded', checkAutoPlay);
-            } else {
-                // `DOMContentLoaded` has already fired
-                checkAutoPlay();
-            }
+            checkAutoPlay();
         }).catch((error) => {
             console.error('failed to get item or current user: ', error);
         });
@@ -2153,8 +2130,6 @@ export default function (view, params) {
 
     function init() {
         const apiClient = getApiClient();
-
-        lookupTag();
 
         bindAll(view, '.btnPlay', 'click', onPlayClick);
         bindAll(view, '.btnReplay', 'click', onPlayClick);
