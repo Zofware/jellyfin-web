@@ -461,6 +461,16 @@ class AppRouter {
             return '#';
         }
 
+        // can we return a link using a short id?
+        const tags = item.Tags;
+        if (tags != null && Array.isArray(tags)) {
+            const tag = tags.find(t => t.startsWith('sid:'));
+            if (tag !== undefined) {
+                const sid = tag.substring(4);
+                return '#/details?sid=' + sid;
+            }
+        }
+
         return '#/details?id=' + id + '&serverId=' + serverId;
     }
 
