@@ -199,12 +199,17 @@ export function playWithPromise(elem, onErrorFn) {
     try {
         return elem.play()
             .catch((e) => {
+                console.log('playWithPromise: exception:', e);
                 const errorName = (e.name || '').toLowerCase();
                 // safari uses aborterror
                 if (errorName === 'notallowederror'
                         || errorName === 'aborterror') {
                     // swallow this error because the user can still click the play button on the video element
-                    return Promise.resolve();
+                    // BUG!!! but play button (OSD) doesn't show up until playing starts! Chicken/egg!!
+                    if (!elem.muted) {
+                        elem.muted = true;
+                        return playWithPromise(elem, onErrorFn);
+                    }
                 }
                 return Promise.reject(e);
             })
