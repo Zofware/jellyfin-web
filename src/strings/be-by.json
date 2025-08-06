@@ -260,7 +260,7 @@
     "RemoveFromPlaylist": "Выдаліць з спіса прайгравання",
     "ChannelNameOnly": "Толькі канал {0}",
     "Composer": "Кампазітар",
-    "CopyFailed": "Не атрымалася скапіраваць",
+    "CopyFailed": "Не ўдалося скапіраваць",
     "EnableFasterAnimations": "Паскораная анімацыя",
     "EnableEnhancedNvdecDecoder": "Уключыць пашыраны дэкодэр NVDEC",
     "LabelPersonRole": "Роля",
@@ -2047,5 +2047,9 @@
     "TranscodingLoadError": "Не ўдалося загрузіць налады перакадавання",
     "Success": "Поспех",
     "StreamCountExceedsLimit": "Колькасць патокаў перавышае ліміт",
-    "HeaderBackups": "Рэзервовыя копіі"
+    "HeaderBackups": "Рэзервовыя копіі",
+    "LabelBundled": "У камплекце",
+    "LabelAvailable": "Даступна",
+    "ManageRepositories": "Кіраваць рэпазіторыямі",
+    "ViewAllPlugins": "Праглядзець усе плагіны"
 }
