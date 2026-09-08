@@ -490,11 +490,31 @@ class AppRouter {
         }
 
         if (item.IsFolder) {
+            // can we return a link using a short id?
+            const tags = item.Tags;
+            if (tags != null && Array.isArray(tags)) {
+                const tag = tags.find(t => t.startsWith('sid:'));
+                if (tag !== undefined) {
+                    const sid = tag.substring(4);
+                    return 'l?sid=' + sid;
+                }
+            }
+
             if (id) {
                 return '#/list?parentId=' + id + '&serverId=' + serverId;
             }
 
             return '#';
+        }
+
+        // can we return a link using a short id?
+        const tags = item.Tags;
+        if (tags != null && Array.isArray(tags)) {
+            const tag = tags.find(t => t.startsWith('sid:'));
+            if (tag !== undefined) {
+                const sid = tag.substring(4);
+                return 'd?sid=' + sid;
+            }
         }
 
         return '#/details?id=' + id + '&serverId=' + serverId;
