@@ -315,7 +315,8 @@ function executeAction(card, target, action) {
                 } :
                 {};
 
-            options.positionTo = target;
+        options.positionTo = target;
+        options.share = true;
 
             showContextMenu(card, options);
             break;

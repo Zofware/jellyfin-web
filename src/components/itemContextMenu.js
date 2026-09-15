@@ -583,11 +583,15 @@ function executeCommand(item, id, options) {
                 deleteItem(apiClient, item).then(getResolveFunction(resolve, id, true, true, itemId), getResolveFunction(resolve, id));
                 break;
             case 'share':
-                navigator.share({
-                    title: item.Name,
-                    text: item.Overview,
-                    url: `${apiClient.serverAddress()}/web/${appRouter.getRouteUrl(item)}`
-                });
+                {
+                    const routeUrl = appRouter.getRouteUrl(item);
+                    const prefix = routeUrl.startsWith('#', 0) ? '/web/' : '/';
+                    navigator.share({
+                        title: item.Name,
+                        text: item.Overview,
+                        url: `${apiClient.serverAddress()}${prefix}${routeUrl}`
+                    });
+                }
                 break;
             case 'album':
                 appRouter.showItem(item.AlbumId, item.ServerId);

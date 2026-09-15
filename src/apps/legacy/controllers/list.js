@@ -350,7 +350,28 @@ function getItem(params) {
         return Promise.resolve(null);
     }
 
-    const apiClient = ServerConnections.getApiClient(params.serverId);
+    const apiClient = params.serverId ? ServerConnections.getApiClient(params.serverId) : ApiClient;
+
+    if (params.tag || params.sid) {
+        // Get the tag, either directly or with a short id (sid:) prefix.
+        const tag = params.tag ?? ('sid:' + params.sid);
+
+        // look up the item id associated with the short id
+        return apiClient.getItems(apiClient.getCurrentUserId(),
+            {
+                Recursive: true,
+                Tags: [tag]
+            })
+            .then(function (items) {
+                if (items && items.TotalRecordCount > 0 && items.Items) {
+                    const item = items.Items[0];
+                    params.parentId = item.Id;
+                    params.serverId = params.serverId ?? apiClient.serverId();
+                    return apiClient.getItem(apiClient.getCurrentUserId(), item.Id);
+                }
+            });
+    }
+
     const itemId = params.genreId || params.musicGenreId || params.studioId || params.personId || params.parentId;
 
     if (itemId) {
@@ -1317,7 +1338,7 @@ class ItemsView {
             values.push('Person');
         }
 
-        if (params.parentId) {
+        if (params.parentId || params.tag || params.sid) {
             values.push('Folder');
         }
 
