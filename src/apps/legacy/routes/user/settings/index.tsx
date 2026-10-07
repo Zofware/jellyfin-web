@@ -114,81 +114,89 @@ const UserSettingsPage: FC = () => {
                             </LinkButton>
                         )}
 
-                        <LinkButton
-                            href={`#/mypreferencesdisplay?userId=${userId}`}
-                            className='lnkDisplayPreferences listItem-border'
-                            style={{
-                                display: 'block',
-                                margin: 0,
-                                padding: 0
-                            }}
-                        >
-                            <div className='listItem'>
-                                <span className='material-icons listItemIcon listItemIcon-transparent tv' aria-hidden='true' />
-                                <div className='listItemBody'>
-                                    <div className='listItemBodyText'>
-                                        {globalize.translate('Display')}
+                        {(currentUser?.Policy?.IsAdministrator || currentUser?.Policy?.EnableUserPreferenceAccess) && (
+                            <LinkButton
+                                href={`#/mypreferencesdisplay?userId=${userId}`}
+                                className='lnkDisplayPreferences listItem-border'
+                                style={{
+                                    display: 'block',
+                                    margin: 0,
+                                    padding: 0
+                                }}
+                            >
+                                <div className='listItem'>
+                                    <span className='material-icons listItemIcon listItemIcon-transparent tv' aria-hidden='true' />
+                                    <div className='listItemBody'>
+                                        <div className='listItemBodyText'>
+                                            {globalize.translate('Display')}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </LinkButton>
+                            </LinkButton>
+                        )}
 
-                        <LinkButton
-                            href={`#/mypreferenceshome?userId=${userId}`}
-                            className='lnkHomePreferences listItem-border'
-                            style={{
-                                display: 'block',
-                                margin: 0,
-                                padding: 0
-                            }}
-                        >
-                            <div className='listItem'>
-                                <span className='material-icons listItemIcon listItemIcon-transparent home' aria-hidden='true' />
-                                <div className='listItemBody'>
-                                    <div className='listItemBodyText'>
-                                        {globalize.translate('Home')}
+                        {(currentUser?.Policy?.IsAdministrator || currentUser?.Policy?.EnableUserPreferenceAccess) && (
+                            <LinkButton
+                                href={`#/mypreferenceshome?userId=${userId}`}
+                                className='lnkHomePreferences listItem-border'
+                                style={{
+                                    display: 'block',
+                                    margin: 0,
+                                    padding: 0
+                                }}
+                            >
+                                <div className='listItem'>
+                                    <span className='material-icons listItemIcon listItemIcon-transparent home' aria-hidden='true' />
+                                    <div className='listItemBody'>
+                                        <div className='listItemBodyText'>
+                                            {globalize.translate('Home')}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </LinkButton>
+                            </LinkButton>
+                        )}
 
-                        <LinkButton
-                            href={`#/mypreferencesplayback?userId=${userId}`}
-                            className='lnkPlaybackPreferences listItem-border'
-                            style={{
-                                display: 'block',
-                                margin: 0,
-                                padding: 0
-                            }}
-                        >
-                            <div className='listItem'>
-                                <span className='material-icons listItemIcon listItemIcon-transparent play_circle_filled' aria-hidden='true' />
-                                <div className='listItemBody'>
-                                    <div className='listItemBodyText'>
-                                        {globalize.translate('TitlePlayback')}
+                        {(currentUser?.Policy?.IsAdministrator || currentUser?.Policy?.EnableUserPreferenceAccess) && (
+                            <LinkButton
+                                href={`#/mypreferencesplayback?userId=${userId}`}
+                                className='lnkPlaybackPreferences listItem-border'
+                                style={{
+                                    display: 'block',
+                                    margin: 0,
+                                    padding: 0
+                                }}
+                            >
+                                <div className='listItem'>
+                                    <span className='material-icons listItemIcon listItemIcon-transparent play_circle_filled' aria-hidden='true' />
+                                    <div className='listItemBody'>
+                                        <div className='listItemBodyText'>
+                                            {globalize.translate('TitlePlayback')}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </LinkButton>
+                            </LinkButton>
+                        )}
 
-                        <LinkButton
-                            href={`#/mypreferencessubtitles?userId=${userId}`}
-                            className='lnkSubtitlePreferences listItem-border'
-                            style={{
-                                display: 'block',
-                                margin: 0,
-                                padding: 0
-                            }}
-                        >
-                            <div className='listItem'>
-                                <span className='material-icons listItemIcon listItemIcon-transparent closed_caption' aria-hidden='true' />
-                                <div className='listItemBody'>
-                                    <div className='listItemBodyText'>
-                                        {globalize.translate('Subtitles')}
+                        {(currentUser?.Policy?.IsAdministrator || currentUser?.Policy?.EnableUserPreferenceAccess) && (
+                            <LinkButton
+                                href={`#/mypreferencessubtitles?userId=${userId}`}
+                                className='lnkSubtitlePreferences listItem-border'
+                                style={{
+                                    display: 'block',
+                                    margin: 0,
+                                    padding: 0
+                                }}
+                            >
+                                <div className='listItem'>
+                                    <span className='material-icons listItemIcon listItemIcon-transparent closed_caption' aria-hidden='true' />
+                                    <div className='listItemBody'>
+                                        <div className='listItemBodyText'>
+                                            {globalize.translate('Subtitles')}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </LinkButton>
+                            </LinkButton>
+                        )}
 
                         {appHost.supports(AppFeature.DownloadManagement) && (
                             <LinkButton
@@ -211,7 +219,7 @@ const UserSettingsPage: FC = () => {
                             </LinkButton>
                         )}
 
-                        {appHost.supports(AppFeature.ClientSettings) && (
+                        {appHost.supports(AppFeature.ClientSettings) && (currentUser?.Policy?.IsAdministrator || currentUser?.Policy?.EnableUserPreferenceAccess) && (
                             <LinkButton
                                 onClick={shell.openClientSettings}
                                 className='clientSettings listItem-border'
@@ -232,7 +240,7 @@ const UserSettingsPage: FC = () => {
                             </LinkButton>
                         )}
 
-                        {isLoggedInUser && !browser.mobile && !isControlsPageEmpty && (
+                        {isLoggedInUser && (currentUser?.Policy?.IsAdministrator || currentUser?.Policy?.EnableUserPreferenceAccess) && !browser.mobile && !isControlsPageEmpty && (
                             <LinkButton
                                 href={`#/mypreferencescontrols?userId=${userId}`}
                                 className='lnkControlsPreferences listItem-border'
